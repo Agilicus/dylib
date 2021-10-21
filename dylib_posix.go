@@ -112,8 +112,6 @@ type LazyDLL struct {
 	handle C.uintptr_t
 	err    error
 	Name   string
-	// 加了异常处理的
-	mySyscall *LazyProc
 }
 
 func NewLazyDLL(name string) *LazyDLL {
@@ -137,11 +135,6 @@ func NewLazyDLL(name string) *LazyDLL {
 	if m.handle == 0 {
 		m.err = fmt.Errorf("dlopen(\"%s\"), failed.", name)
 		return m
-	}
-	// 导入调用的, 实现一个动态调用call的，主要是为了解决异常问题
-	m.mySyscall = m.NewProc("MySyscall")
-	if m.mySyscall.Find() != nil {
-		m.mySyscall = nil
 	}
 
 	return m
